@@ -2,9 +2,10 @@ package edu.wctc.samples.jpahotel.controller;
 
 import edu.wctc.samples.jpahotel.entity.Hotel;
 import edu.wctc.samples.jpahotel.service.HotelFacade;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
+import java.io.StringReader;
 import java.util.List;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -12,7 +13,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.servlet.RequestDispatcher;
+import javax.json.JsonReader;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,54 +64,61 @@ public class HotelController extends HttpServlet {
             switch (action) {
                 case LIST_ACTION:
                     refreshHotelList(request, response);
-                    return;
+                    break;
 
                 case FIND_ONE_ACTION: {
                     Hotel hotel = hotelService.find(Integer.valueOf(hotelId));
-                    
-                    PrintWriter out = response.getWriter();
-                    response.setContentType("application/json");
                     JsonObjectBuilder builder = Json.createObjectBuilder()
-                        .add("hotelId", hotel.getHotelId())
-                        .add("name", hotel.getName())
-                        .add("address", hotel.getAddress())
-                        .add("city", hotel.getCity())
-                        .add("zip", hotel.getZip());
-                    
+                            .add("hotelId", hotel.getHotelId())
+                            .add("name", hotel.getName())
+                            .add("address", hotel.getAddress())
+                            .add("city", hotel.getCity())
+                            .add("zip", hotel.getZip());
+
                     JsonObject hotelJson = builder.build();
 
+                    PrintWriter out = response.getWriter();
+                    response.setContentType("application/json");
                     out.write(hotelJson.toString());
                     out.flush();
-                    return;
-                }
-                
-                case UPDATE_ACTION: {
-                    // create new entity and populate
-                    Hotel hotel = new Hotel();
-                    Integer id = (hotelId == null || hotelId.isEmpty()) ? null : Integer.valueOf(hotelId);
-                    hotel.setHotelId(id);
-                    hotel.setAddress(request.getParameter("address"));
-                    hotel.setCity(request.getParameter("city"));
-                    hotel.setName(request.getParameter("name"));
-                    hotel.setZip(request.getParameter("zip"));
-                        // Next, check if we're saving or eleting
-                    // Note that we're using Save for edits and new records.
-                    // This is possible because the AbstractFacade uses merge for
-                    // saving updates, which also works for new records.
-                    String updateAction = request.getParameter("Update");
-                    switch (updateAction) {
-                        case "Save":
-                            hotelService.edit(hotel);
-                            request.setAttribute("foundHotel", hotel);
-                            refreshHotelList(request, response);
-                            break;
-                        case "Delete":
-                            hotelService.remove(hotel);
-                            refreshHotelList(request, response);
-                            break;
-                    }
                     break;
                 }
+
+                case UPDATE_ACTION: {
+                    PrintWriter out = response.getWriter();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = request.getReader();
+                    try {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line).append('\n');
+                        }
+                    } finally {
+                        br.close();
+                    }
+
+                    String payload = sb.toString();
+                    JsonReader reader = Json.createReader(new StringReader(payload));
+                    JsonObject hotelJson = reader.readObject();
+
+                    // create new entity and populate
+                    Hotel hotel = new Hotel();
+                    hotelId = hotelJson.getString("hotelId");
+                    Integer id = (hotelId == null || hotelId.isEmpty()) ? null : Integer.valueOf(hotelId);
+                    hotel.setHotelId(id);
+                    hotel.setAddress(hotelJson.getString("address"));
+                    hotel.setCity(hotelJson.getString("city"));
+                    hotel.setName(hotelJson.getString("name"));
+                    hotel.setZip(hotelJson.getString("zip"));
+
+                    hotelService.edit(hotel);
+
+                    response.setContentType("application/json; charset=UTF-8");
+                    out.write("{'status':'success'}");
+                    out.flush();
+                    break;
+                }
+
                 case SEARCH_ACTION:
                     String searchKey = request.getParameter("searchKey");
                     List<Hotel> hotels = hotelService.searchForHotelByAny(searchKey);
@@ -130,10 +138,6 @@ public class HotelController extends HttpServlet {
             request.setAttribute("errMessage", e2.getMessage());
         }
 
-        RequestDispatcher dispatcher
-                = getServletContext().getRequestDispatcher(destination);
-        dispatcher.forward(request, response);
-
     }
 
     /*
@@ -146,25 +150,22 @@ public class HotelController extends HttpServlet {
             throws ServletException, IOException {
 
         List<Hotel> hotels = hotelService.findAll();
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 
-        PrintWriter out = response.getWriter();
-        response.setContentType("application/json");
-
-         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-         
-         hotels.forEach((hotel) -> {
+        hotels.forEach((hotel) -> {
             jsonArrayBuilder.add(
-                Json.createObjectBuilder()
-                   .add("hotelId", hotel.getHotelId())
-                   .add("name", hotel.getName())
-                   .add("address", hotel.getAddress())
-                   .add("city", hotel.getCity())
-                   .add("zip", hotel.getZip())
+                    Json.createObjectBuilder()
+                    .add("hotelId", hotel.getHotelId())
+                    .add("name", hotel.getName())
+                    .add("address", hotel.getAddress())
+                    .add("city", hotel.getCity())
+                    .add("zip", hotel.getZip())
             );
-         });
+        });
 
         JsonArray hotelsJson = jsonArrayBuilder.build();
-
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
         out.write(hotelsJson.toString());
         out.flush();
     }
