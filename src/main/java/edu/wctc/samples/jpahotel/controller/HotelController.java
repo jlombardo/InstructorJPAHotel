@@ -4,9 +4,13 @@ import edu.wctc.samples.jpahotel.entity.Hotel;
 import edu.wctc.samples.jpahotel.service.HotelFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -59,13 +63,27 @@ public class HotelController extends HttpServlet {
             switch (action) {
                 case LIST_ACTION:
                     refreshHotelList(request, response);
-                    break;
+                    return;
+
                 case FIND_ONE_ACTION: {
                     Hotel hotel = hotelService.find(Integer.valueOf(hotelId));
-                    request.setAttribute("foundHotel", hotel);
-                    refreshHotelList(request, response);
-                    break;
+                    
+                    PrintWriter out = response.getWriter();
+                    response.setContentType("application/json");
+                    JsonObjectBuilder builder = Json.createObjectBuilder()
+                        .add("hotelId", hotel.getHotelId())
+                        .add("name", hotel.getName())
+                        .add("address", hotel.getAddress())
+                        .add("city", hotel.getCity())
+                        .add("zip", hotel.getZip());
+                    
+                    JsonObject hotelJson = builder.build();
+
+                    out.write(hotelJson.toString());
+                    out.flush();
+                    return;
                 }
+                
                 case UPDATE_ACTION: {
                     // create new entity and populate
                     Hotel hotel = new Hotel();
@@ -132,17 +150,23 @@ public class HotelController extends HttpServlet {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
 
-//        JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder()
-//                .add("promoProdId", promoProd.getPromoProdId())
-//                .add("promoWeekId", promoProd.getPromoWeekId())
-//                .add("itemName", promoProd.getItemName())
-//                .add("currRetail", promoProd.getCurrRetail().toString())
-//                .add("featurePrice", promoProd.getFeaturePrice().toString());
-//
-//        JsonObject prodsJson = jsonObjBuilder.build();
-//        out.write(prodsJson.toString());
+         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+         
+         hotels.forEach((hotel) -> {
+            jsonArrayBuilder.add(
+                Json.createObjectBuilder()
+                   .add("hotelId", hotel.getHotelId())
+                   .add("name", hotel.getName())
+                   .add("address", hotel.getAddress())
+                   .add("city", hotel.getCity())
+                   .add("zip", hotel.getZip())
+            );
+         });
+
+        JsonArray hotelsJson = jsonArrayBuilder.build();
+
+        out.write(hotelsJson.toString());
         out.flush();
-        return;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

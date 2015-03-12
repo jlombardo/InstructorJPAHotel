@@ -16,6 +16,8 @@
         var $searchKey = $('#searchKey');
         var baseUrl = "HotelController";
 
+        getHotelList();
+
         $btnAdd.on('click', function () {
             clearForm();
             $hotelName.focus();
@@ -30,19 +32,45 @@
             $hotelZip.val("");
         }
 
-        $.get(baseUrl + "?action=list").then(function (hotels) {
-            renderList(hotels);
-        }, handleError);
+        function getHotelList() {
+            $.get(baseUrl + "?action=list").then(function (hotels) {
+                renderList(hotels);
+            }, handleError);
+        }
 
         function renderList(hotels) {
             $('#hotelList li').remove();
             $.each(hotels, function (index, hotel) {
-                $('#hotelList').append('<li><a href="#" data-identity="' + rootURL + '/' + hotel.hotelId + '">' + hotel.name + '</a></li>');
+                $('#hotelList').append('<li><a href="#" data-identity="' + baseUrl + '?action=findone&hotelId=' + hotel.hotelId + '">' + hotel.name + '</a></li>');
             });
         }
-        
+
         function handleError(xhr, status, error) {
             console.log(error);
+        }
+
+        $('#hotelList').on('click', "a", function () {
+            findById($(this).data('identity'));
+        });
+
+        function findById(self) {
+            $.get(self).then(function (hotel) {
+                renderDetails(hotel);
+            }, handleError);
+            return;
+        }
+
+        function renderDetails(hotel) {
+            if (hotel.name === undefined) {
+                $('#hotelId').val(hotel.hotelId);
+            } else {
+                var id = hotel.hotelId;
+                $('#hotelId').val(id);
+            }
+            $('#name').val(hotel.name);
+            $('#address').val(hotel.address);
+            $('#city').val(hotel.city);
+            $('#zip').val(hotel.zip);
         }
 
         /*
