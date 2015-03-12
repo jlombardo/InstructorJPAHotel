@@ -14,6 +14,7 @@
         var $hotelCity = $('#city');
         var $hotelZip = $('#zip');
         var $searchKey = $('#searchKey');
+        var baseUrl = "HotelController";
 
         $btnAdd.on('click', function () {
             clearForm();
@@ -29,6 +30,25 @@
             $hotelZip.val("");
         }
 
+        $.get(baseUrl + "?action=list").then(function (hotels) {
+            renderList(hotels);
+        }, handleError);
+
+        function renderList(hotels) {
+            $('#hotelList li').remove();
+            $.each(hotels, function (index, hotel) {
+                $('#hotelList').append('<li><a href="#" data-identity="' + rootURL + '/' + hotel.hotelId + '">' + hotel.name + '</a></li>');
+            });
+        }
+        
+        function handleError(xhr, status, error) {
+            console.log(error);
+        }
+
+        /*
+         * This is the old version which just sends a request to
+         * a servlet for normal processing.
+         */
         $btnSearch.on('click', function () {
             var searchKey = $searchKey.val();
             searchKey = escapeHtml(searchKey.trim());
