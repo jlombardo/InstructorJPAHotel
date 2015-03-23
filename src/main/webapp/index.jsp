@@ -33,7 +33,7 @@
             </ul>
         </div>
 
-        <form id="hotelForm" method="POST" action="HotelController?action=update">
+        <form id="hotelForm">
 
             <div class="mainArea">
 
@@ -52,8 +52,8 @@
                 <label>Zip</label>
                 <input type="text" id="zip" name="zip" value="${foundHotel.zip}"/>
 
-                <button id="btnSave" name="Update" type="submit" value="Save">Save</button>
-                <button id="btnDelete" name="Update" type="submit" value="Delete">Delete</button>
+                <button id="btnSave" name="Update" type="button" value="Save">Save</button>
+                <button id="btnDelete" name="Update" type="button" value="Delete">Delete</button>
 
             </div>
 

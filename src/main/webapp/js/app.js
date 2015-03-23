@@ -16,7 +16,7 @@
         var $hotelCity = $('#city');
         var $hotelZip = $('#zip');
         var $searchKey = $('#searchKey');
-        var baseUrl = "HotelController";
+        var baseUrl = "http://localhost:8080/InstructorJPAHotel/HotelController";
 
         findAll();
         $btnDelete.hide();
@@ -33,9 +33,7 @@
                     alert("Hotel created successfully!");
                 }, handleError);
             } else {
-                updateHotel.then(function () {
-                    alert("Hotel created successfully!");
-                }, handleError);
+                updateHotel();
             }
             return false;
         });
@@ -139,11 +137,19 @@
         var updateHotel = function () {
             console.log('updateHotel');
             $.ajax({
-                type: 'PUT',
+                type: 'POST',
                 contentType: 'application/json',
                 url: baseUrl + "?action=update",
-                dataType: "html",
-                data: formToJSON()
+                dataType: "application/json",
+                data: formToJSON(),
+                success: function (data, textStatus, jqXHR) {
+                    alert('Hotel created successfully');
+                    $('#btnDelete').show();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.status);
+                    alert('Update Hotel error: ' + textStatus);
+                }
             });
         }
 
@@ -171,7 +177,7 @@
 // Helper function to serialize all the form fields into a JSON string
         function formToJSON() {
             return JSON.stringify({
-                "hotelId": $hotelId.val90,
+                "hotelId": $hotelId.val(),
                 "address": $hotelAddress.val(),
                 "city": $hotelCity.val(),
                 "name": $hotelName.val(),

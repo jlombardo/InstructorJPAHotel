@@ -14,10 +14,13 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * The main controller in this app
@@ -33,11 +36,6 @@ public class HotelController extends HttpServlet {
     private static final String UPDATE_ACTION = "update";
     private static final String SEARCH_ACTION = "search";
     private static final String HOME_PAGE = "/index.jsp";
-
-    // Note that we're using CDI here (see Web Pages/WEB-INF/beans.xml)
-    // so we can use this annotatio instead of EJB
-    @Inject
-    private HotelFacade hotelService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,6 +53,13 @@ public class HotelController extends HttpServlet {
 
         // set default destination
         String destination = HOME_PAGE;
+        
+        // Need to get your Spring Beans this way in a controller...
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        HotelFacade hotelService = (HotelFacade) ctx.getBean("hotelService");
+
 
         // Attempt to get QueryString parameters, may not always be available
         String action = request.getParameter(ACTION_PARAM);
@@ -63,7 +68,7 @@ public class HotelController extends HttpServlet {
         try {
             switch (action) {
                 case LIST_ACTION:
-                    refreshHotelList(request, response);
+                    refreshHotelList(request, response, hotelService);
                     break;
 
                 case FIND_ONE_ACTION: {
@@ -114,7 +119,7 @@ public class HotelController extends HttpServlet {
                     hotelService.edit(hotel);
 
                     response.setContentType("application/json; charset=UTF-8");
-                    out.write("{'status':'success'}");
+                    out.write("{\"status\" : \"success\"}");
                     out.flush();
                     break;
                 }
@@ -124,7 +129,7 @@ public class HotelController extends HttpServlet {
                     List<Hotel> hotels = hotelService.searchForHotelByAny(searchKey);
                     // Only return first match or nothing if none found
                     request.setAttribute("foundHotel", hotels.isEmpty() ? null : hotels.get(0));
-                    refreshHotelList(request, response);
+                    refreshHotelList(request, response, hotelService);
                     break;
             }
 
@@ -146,7 +151,7 @@ public class HotelController extends HttpServlet {
      update portions of the page that need updating. Then this refresh 
      operation won't be necessary.
      */
-    private void refreshHotelList(HttpServletRequest request, HttpServletResponse response)
+    private void refreshHotelList(HttpServletRequest request, HttpServletResponse response, HotelFacade hotelService)
             throws ServletException, IOException {
 
         List<Hotel> hotels = hotelService.findAll();

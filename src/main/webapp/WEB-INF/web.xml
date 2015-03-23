@@ -8,6 +8,20 @@
         <servlet-name>HotelController</servlet-name>
         <url-pattern>/HotelController</url-pattern>
     </servlet-mapping>
+    
+    <!-- Security configuration -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    <!-- end spring configuration -->
+        
     <session-config>
         <session-timeout>
             30
