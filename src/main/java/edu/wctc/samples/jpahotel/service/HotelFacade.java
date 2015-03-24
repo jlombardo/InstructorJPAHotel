@@ -32,6 +32,10 @@ public class HotelFacade {
         return hotelRepo.findOne(id);
     }
     
+    public void deleteById(Integer id) {
+        hotelRepo.deleteById(id);
+    }
+    
     /**
      * Finds hotels by a search key, which is checked against one of these 
      * fields: name, city, zip
@@ -40,7 +44,7 @@ public class HotelFacade {
      * @return matching hotel records
      */
     public List<Hotel> searchForHotelByAny(String searchKey) {
-        return hotelRepo.searchForHotelByAny(searchKey);
+        return hotelRepo.searchForHotelByAny("%" + searchKey + "%");
     }
     
 }

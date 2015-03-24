@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.List;
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -34,6 +33,7 @@ public class HotelController extends HttpServlet {
     private static final String LIST_ACTION = "list";
     private static final String FIND_ONE_ACTION = "findone";
     private static final String UPDATE_ACTION = "update";
+    private static final String DELETE_ACTION = "delete";
     private static final String SEARCH_ACTION = "search";
     private static final String HOME_PAGE = "/index.jsp";
 
@@ -89,6 +89,16 @@ public class HotelController extends HttpServlet {
                     break;
                 }
 
+                case DELETE_ACTION: {
+                    PrintWriter out = response.getWriter();
+                    hotelService.deleteById(Integer.valueOf(hotelId));
+                    response.setContentType("application/json; charset=UTF-8");
+                    response.setStatus(200);
+                    out.write("{\"success\":\"true\"}");
+                    out.flush();
+                    break;
+                }
+
                 case UPDATE_ACTION: {
                     PrintWriter out = response.getWriter();
                     StringBuilder sb = new StringBuilder();
@@ -119,21 +129,41 @@ public class HotelController extends HttpServlet {
                     hotelService.edit(hotel);
 
                     response.setContentType("application/json; charset=UTF-8");
-                    out.write("{\"status\" : \"success\"}");
+                    response.setStatus(200);
+                    out.write("{\"success\":\"true\"}");
                     out.flush();
                     break;
                 }
 
                 case SEARCH_ACTION:
+                    JsonObjectBuilder builder = null;
+                    JsonObject hotelJson = null;
                     String searchKey = request.getParameter("searchKey");
                     List<Hotel> hotels = hotelService.searchForHotelByAny(searchKey);
                     // Only return first match or nothing if none found
-                    request.setAttribute("foundHotel", hotels.isEmpty() ? null : hotels.get(0));
-                    refreshHotelList(request, response, hotelService);
+                    if(!hotels.isEmpty()) {
+                        Hotel hotel = hotels.get(0);
+                        builder = Json.createObjectBuilder()
+                            .add("hotelId", hotel.getHotelId())
+                            .add("name", hotel.getName())
+                            .add("address", hotel.getAddress())
+                            .add("city", hotel.getCity())
+                            .add("zip", hotel.getZip());
+                        hotelJson = builder.build();
+                    }
+                    
+                    PrintWriter out = response.getWriter();
+                    response.setContentType("application/json");
+                    if(builder == null) {
+                        out.write("{}");
+                    } else {
+                        out.write(hotelJson.toString());
+                    }
+                    out.flush();
                     break;
             }
 
-        } catch (ServletException | IOException | NumberFormatException e) {
+        } catch (IOException | NumberFormatException e) {
             // Error messages will appear on the destination page if present
             request.setAttribute("errMessage", e.getMessage());
 

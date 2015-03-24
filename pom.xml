@@ -13,7 +13,7 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.springframework.version>4.1.5.RELEASE</org.springframework.version>
-        <spring-data-jpa.version>1.7.2.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>1.8.0.RELEASE</spring-data-jpa.version>
         <querydsl.version>3.6.0</querydsl.version>
         <querydsl.generated.src>target/generated-sources/java</querydsl.generated.src>
 </properties>

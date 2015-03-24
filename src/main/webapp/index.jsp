@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="css/styles.css" /> 
     </head>
     <body>
-        <h1>Hotel Manager</h1>
+        <h1>Hotel Manager :: AJAX / Spring-Data-JPA Demo</h1>
         <p class="errMsg">${errMessage == null ? "" : "Sorry, there was a problem: " + errMessage}</p>
 
         <div class="header">
@@ -27,9 +27,6 @@
 
         <div class="leftArea">
             <ul id="hotelList">
-                <c:forEach var="hotel" items="${hotels}">
-                    <li><a href="HotelController?action=findone&hotelId=${hotel.hotelId}">${hotel.name}</a></li>
-                </c:forEach>
             </ul>
         </div>
 
@@ -38,19 +35,19 @@
             <div class="mainArea">
 
                 <label>Id:</label>
-                <input id="hotelId" name="hotelId" type="text" value="${foundHotel.hotelId}" readonly />
+                <input id="hotelId" name="hotelId" type="text" readonly />
 
                 <label>Name:</label>
-                <input type="text" id="name" name="name" value="${foundHotel.name}" required>
+                <input type="text" id="name" name="name" required>
 
                 <label>Address</label>
-                <input type="text" id="address" name="address" value="${foundHotel.address}"/>
+                <input type="text" id="address" name="address"/>
 
                 <label>City</label>
-                <input type="text" id="city" name="city" value="${foundHotel.city}"/>
+                <input type="text" id="city" name="city"/>
 
                 <label>Zip</label>
-                <input type="text" id="zip" name="zip" value="${foundHotel.zip}"/>
+                <input type="text" id="zip" name="zip"/>
 
                 <button id="btnSave" name="Update" type="button" value="Save">Save</button>
                 <button id="btnDelete" name="Update" type="button" value="Delete">Delete</button>

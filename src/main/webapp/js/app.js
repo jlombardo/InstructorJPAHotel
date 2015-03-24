@@ -16,22 +16,21 @@
         var $hotelCity = $('#city');
         var $hotelZip = $('#zip');
         var $searchKey = $('#searchKey');
-        var baseUrl = "http://localhost:8080/InstructorJPAHotel/HotelController";
+        var baseUrl = "HotelController";
 
         findAll();
         $btnDelete.hide();
 
         $btnAdd.on('click', function () {
             clearForm();
+            $btnDelete.hide();
             $hotelName.focus();
             return;
         });
 
         $btnSave.click(function () {
             if ($hotelId.val() === '') {
-                addHotel.then(function () {
-                    alert("Hotel created successfully!");
-                }, handleError);
+                addHotel();
             } else {
                 updateHotel();
             }
@@ -39,9 +38,7 @@
         });
 
         $btnDelete.click(function () {
-            deleteHotel.then(function () {
-                alert("Hotel deleted successfully!");
-            }, handleError);
+            deleteHotel();
             return false;
         });
 
@@ -79,6 +76,7 @@
         function findById(self) {
             $.get(self).then(function (hotel) {
                 renderDetails(hotel);
+                $btnDelete.show();
             }, handleError);
             return false;
         }
@@ -97,15 +95,17 @@
         }
 
         /*
-         * This is the old version which just sends a request to
-         * a servlet for normal processing.
+         * The searchKey is any term that is part of a hotel name, city 
+         * or zip.
          */
         $btnSearch.on('click', function () {
             var searchKey = $searchKey.val();
             searchKey = escapeHtml(searchKey.trim());
             var url = "HotelController?action=search&searchKey=" + searchKey;
-            document.location.href = url;
-            return false;
+            $.get(url).then(function (hotel) {
+                renderDetails(hotel);
+                $btnDelete.show();
+            }, handleError);
         });
 
         var htmlEscapeCodeMap = {
@@ -130,6 +130,14 @@
                 url: baseUrl + "?action=update",
                 dataType: "json",
                 data: formToJSON()
+            })
+            .done(function () {
+                findAll();
+                $btnDelete.show();
+                alert("Hotel added successfully");
+            })
+            .fail(function ( jqXHR, textStatus, errorThrown ) {
+                alert("Hotel could not be added due to: " + errorThrown);
             });
         }
 
@@ -140,24 +148,33 @@
                 type: 'POST',
                 contentType: 'application/json',
                 url: baseUrl + "?action=update",
-                dataType: "application/json",
-                data: formToJSON(),
-                success: function (data, textStatus, jqXHR) {
-                    alert('Hotel created successfully');
-                    $('#btnDelete').show();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR.status);
-                    alert('Update Hotel error: ' + textStatus);
-                }
+                dataType: "json",
+                data: formToJSON()
+            })
+            .done(function () {
+                findAll();
+                $btnDelete.show();
+                alert("Hotel updated successfully");
+            })
+            .fail(function ( jqXHR, textStatus, errorThrown ) {
+                alert("Hotel could not be updated due to: " + errorThrown);
             });
         }
 
         var deleteHotel = function () {
             console.log('deleteHotel');
             $.ajax({
-                type: 'DELETE',
+                type: 'POST',
                 url: baseUrl + "?action=delete&hotelId=" + $hotelId.val()
+            })
+            .done(function () {
+                findAll();
+                clearForm();
+                $btnDelete.hide();
+                alert("Hotel deleted successfully");
+            })
+            .fail(function ( jqXHR, textStatus, errorThrown ) {
+                alert("Hotel could not be deleted due to: " + errorThrown);
             });
         }
 
