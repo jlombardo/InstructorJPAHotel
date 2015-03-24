@@ -171,7 +171,7 @@
 // Helper function to serialize all the form fields into a JSON string
         function formToJSON() {
             return JSON.stringify({
-                "hotelId": $hotelId.val90,
+                "hotelId": $hotelId.val(),
                 "address": $hotelAddress.val(),
                 "city": $hotelCity.val(),
                 "name": $hotelName.val(),
