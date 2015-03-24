@@ -31,11 +31,12 @@ public class HotelController extends HttpServlet {
     private static final String LIST_ACTION = "list";
     private static final String FIND_ONE_ACTION = "findone";
     private static final String UPDATE_ACTION = "update";
+    private static final String DELETE_ACTION = "delete";
     private static final String SEARCH_ACTION = "search";
     private static final String HOME_PAGE = "/index.jsp";
 
     // Note that we're using CDI here (see Web Pages/WEB-INF/beans.xml)
-    // so we can use this annotatio instead of EJB
+    // so we can use this annotation instead of EJB
     @Inject
     private HotelFacade hotelService;
 
@@ -84,6 +85,16 @@ public class HotelController extends HttpServlet {
                     break;
                 }
 
+                case DELETE_ACTION: {
+                    PrintWriter out = response.getWriter();
+                    hotelService.deleteById(Integer.valueOf(hotelId));
+                    response.setContentType("application/json; charset=UTF-8");
+                    response.setStatus(200);
+                    out.write("{\"success\":\"true\"}");
+                    out.flush();
+                    break;
+                }
+
                 case UPDATE_ACTION: {
                     PrintWriter out = response.getWriter();
                     StringBuilder sb = new StringBuilder();
@@ -114,17 +125,37 @@ public class HotelController extends HttpServlet {
                     hotelService.edit(hotel);
 
                     response.setContentType("application/json; charset=UTF-8");
-                    out.write("{'status':'success'}");
+                    response.setStatus(200);
+                    out.write("{\"success\":\"true\"}");
                     out.flush();
                     break;
                 }
 
                 case SEARCH_ACTION:
+                    JsonObjectBuilder builder = null;
+                    JsonObject hotelJson = null;
                     String searchKey = request.getParameter("searchKey");
                     List<Hotel> hotels = hotelService.searchForHotelByAny(searchKey);
                     // Only return first match or nothing if none found
-                    request.setAttribute("foundHotel", hotels.isEmpty() ? null : hotels.get(0));
-                    refreshHotelList(request, response);
+                    if(!hotels.isEmpty()) {
+                        Hotel hotel = hotels.get(0);
+                        builder = Json.createObjectBuilder()
+                            .add("hotelId", hotel.getHotelId())
+                            .add("name", hotel.getName())
+                            .add("address", hotel.getAddress())
+                            .add("city", hotel.getCity())
+                            .add("zip", hotel.getZip());
+                        hotelJson = builder.build();
+                    }
+                    
+                    PrintWriter out = response.getWriter();
+                    response.setContentType("application/json");
+                    if(builder == null) {
+                        out.write("{}");
+                    } else {
+                        out.write(hotelJson.toString());
+                    }
+                    out.flush();
                     break;
             }
 

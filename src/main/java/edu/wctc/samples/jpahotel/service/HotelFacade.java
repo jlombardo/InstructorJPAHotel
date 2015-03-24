@@ -6,7 +6,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -28,6 +27,11 @@ public class HotelFacade extends AbstractFacade<Hotel> {
 
     public HotelFacade() {
         super(Hotel.class);
+    }
+    
+    public void deleteById(Integer id) {
+        Hotel hotel = this.find(id);
+        this.remove(hotel);
     }
     
     /**
