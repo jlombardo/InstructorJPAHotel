@@ -27,7 +27,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author jlombardo
  */
 public class HotelController extends HttpServlet {
-
+    private static final long serialVersionUID = 1L;
     private static final String ACTION_PARAM = "action";
     private static final String ID_PARAM = "hotelId";
     private static final String LIST_ACTION = "list";
@@ -102,14 +102,11 @@ public class HotelController extends HttpServlet {
                 case UPDATE_ACTION: {
                     PrintWriter out = response.getWriter();
                     StringBuilder sb = new StringBuilder();
-                    BufferedReader br = request.getReader();
-                    try {
+                    try (BufferedReader br = request.getReader()) {
                         String line;
                         while ((line = br.readLine()) != null) {
                             sb.append(line).append('\n');
                         }
-                    } finally {
-                        br.close();
                     }
 
                     String payload = sb.toString();
@@ -161,6 +158,9 @@ public class HotelController extends HttpServlet {
                     }
                     out.flush();
                     break;
+                    
+                default:
+                    return;
             }
 
         } catch (IOException | NumberFormatException e) {
@@ -168,7 +168,7 @@ public class HotelController extends HttpServlet {
             request.setAttribute("errMessage", e.getMessage());
 
             // Just in case it's some other exception not predicted
-        } catch (Exception e2) {
+        } catch (RuntimeException e2) {
             // Error messages will appear on the destination page if present
             request.setAttribute("errMessage", e2.getMessage());
         }
@@ -243,5 +243,6 @@ public class HotelController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 
 }
