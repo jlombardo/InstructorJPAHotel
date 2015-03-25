@@ -8,6 +8,11 @@
         <servlet-name>HotelController</servlet-name>
         <url-pattern>/HotelController</url-pattern>
     </servlet-mapping>
+    <!-- required for i18n -->
+    <context-param>
+        <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+        <param-value>edu.wctc.samples.jpahotel.resources.messages</param-value>
+    </context-param>
     <session-config>
         <session-timeout>
             30

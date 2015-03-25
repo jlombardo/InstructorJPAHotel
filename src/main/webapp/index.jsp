@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     if(request.getAttribute("hotels") == null) {
@@ -14,7 +15,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>JPA Web Demo :: Hotels</title>
+        <title><fmt:message key='home.page.title'/></title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/styles.css" /> 
@@ -26,8 +27,8 @@
         <div class="header">
             <!-- These items are handled by app.js -->
             <input type="text" id="searchKey"/>
-            <button id="btnSearch">Search</button>
-            <button id="btnAdd">New Hotel</button>
+            <button id="btnSearch"><fmt:message key='btn.search.name'/></button>
+            <button id="btnAdd"><fmt:message key='btn.add.name'/></button>
         </div>
 
         <div class="leftArea">
