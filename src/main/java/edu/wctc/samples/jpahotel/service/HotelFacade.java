@@ -3,6 +3,8 @@ package edu.wctc.samples.jpahotel.service;
 import edu.wctc.samples.jpahotel.entity.Hotel;
 import edu.wctc.samples.jpahotel.repository.HotelRepository;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("hotelService")
 public class HotelFacade {
+    private static final Logger LOG = 
+            LoggerFactory.getLogger(HotelFacade.class);
     
     @Autowired
     private HotelRepository hotelRepo;
@@ -21,7 +25,10 @@ public class HotelFacade {
     }
     
     public List<Hotel> findAll() {
-        return hotelRepo.findAll();
+        LOG.trace("finding all hotels");
+        List<Hotel> hotels = hotelRepo.findAll();
+        LOG.trace("Found %d hotels", hotels.size());
+        return hotels;
     }
     
     public Hotel edit(Hotel hotel) {

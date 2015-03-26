@@ -10,11 +10,11 @@
     </appender>
 
     <!-- child level logging for application -->
-    <logger name="edu.wctc.samples.jpahotel" level="INFO" />
+    <logger name="edu.wctc.samples.jpahotel" level="DEBUG" />
     <logger name="org.springframework" level="INFO" />
 
     <!-- root level logging (children can override) -->
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
