@@ -25,9 +25,9 @@ public class HotelFacade {
     }
     
     public List<Hotel> findAll() {
-        LOG.trace("finding all hotels");
+        LOG.debug("finding all hotels");
         List<Hotel> hotels = hotelRepo.findAll();
-        LOG.trace("Found %d hotels", hotels.size());
+        LOG.debug("Found {} hotels", hotels.size());
         return hotels;
     }
     
