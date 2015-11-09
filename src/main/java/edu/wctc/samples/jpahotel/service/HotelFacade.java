@@ -3,9 +3,9 @@ package edu.wctc.samples.jpahotel.service;
 import edu.wctc.samples.jpahotel.entity.Hotel;
 import edu.wctc.samples.jpahotel.repository.HotelRepository;
 import java.util.List;
+import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,7 +17,7 @@ public class HotelFacade {
     private static final Logger LOG = 
             LoggerFactory.getLogger(HotelFacade.class);
     
-    @Autowired
+    @Inject
     private HotelRepository hotelRepo;
     
 
