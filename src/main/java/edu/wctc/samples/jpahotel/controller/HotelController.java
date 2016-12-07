@@ -186,8 +186,9 @@ public class HotelController extends HttpServlet {
 
         List<Hotel> hotels = hotelService.findAll();
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-
-        hotels.forEach((hotel) -> {
+        
+        // Java 5 Style for loop (FASTEST!! x4)
+        for(Hotel hotel : hotels) {
             jsonArrayBuilder.add(
                     Json.createObjectBuilder()
                     .add("hotelId", hotel.getHotelId())
@@ -196,7 +197,32 @@ public class HotelController extends HttpServlet {
                     .add("city", hotel.getCity())
                     .add("zip", hotel.getZip())
             );
-        });
+        }
+
+        // Java 8 Style loop on Iterable object (SLIGHTLY FASTER THAN STREAM)
+//        hotels.forEach((hotel) -> {
+//            jsonArrayBuilder.add(
+//                    Json.createObjectBuilder()
+//                    .add("hotelId", hotel.getHotelId())
+//                    .add("name", hotel.getName())
+//                    .add("address", hotel.getAddress())
+//                    .add("city", hotel.getCity())
+//                    .add("zip", hotel.getZip())
+//            );
+//        });
+        
+        // Java 8 Style loop on Sream object (SLOWEST!! no guarantee of order!)
+//        hotels.stream()
+//            .forEach((hotel) -> {
+//                jsonArrayBuilder.add(
+//                        Json.createObjectBuilder()
+//                        .add("hotelId", hotel.getHotelId())
+//                        .add("name", hotel.getName())
+//                        .add("address", hotel.getAddress())
+//                        .add("city", hotel.getCity())
+//                        .add("zip", hotel.getZip())
+//                );
+//        });
 
         JsonArray hotelsJson = jsonArrayBuilder.build();
         response.setContentType("application/json");

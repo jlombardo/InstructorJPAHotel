@@ -30,40 +30,42 @@
             </ul>
         </div>
 
-        <form id="hotelForm">
+        <div id="content">
+            <form id="hotelForm">
 
-            <div class="mainArea">
+                <div class="mainArea">
 
-                <label>Id:</label>
-                <input id="hotelId" name="hotelId" type="text" readonly />
+                    <label>Id:</label>
+                    <input id="hotelId" name="hotelId" type="text" readonly />
 
-                <label>Name:</label>
-                <input type="text" id="name" name="name" required>
+                    <label>Name:</label>
+                    <input type="text" id="name" name="name" required>
 
-                <label>Address</label>
-                <input type="text" id="address" name="address"/>
+                    <label>Address</label>
+                    <input type="text" id="address" name="address"/>
 
-                <label>City</label>
-                <input type="text" id="city" name="city"/>
+                    <label>City</label>
+                    <input type="text" id="city" name="city"/>
 
-                <label>Zip</label>
-                <input type="text" id="zip" name="zip"/>
+                    <label>Zip</label>
+                    <input type="text" id="zip" name="zip"/>
 
-                <button id="btnSave" name="Update" type="button" value="Save">Save</button>
-                <button id="btnDelete" name="Update" type="button" value="Delete">Delete</button>
+                    <button id="btnSave" name="Update" type="button" value="Save">Save</button>
+                    <button id="btnDelete" name="Update" type="button" value="Delete">Delete</button>
 
-            </div>
+                </div>
 
-            <div class="rightArea">
+                <div class="rightArea">
 
-                <img id="pic" height="300"/>
+                    <img id="pic" height="300"/>
 
-                <label>Notes:</label>
-                <textarea id="description" name="description"></textarea>
-            </div>
+                    <label>Notes:</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
 
-        </form>
-
+            </form>
+        </div>
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="js/app.js"></script>
     </body>

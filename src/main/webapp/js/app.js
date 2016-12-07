@@ -101,11 +101,12 @@
         $btnSearch.on('click', function () {
             var searchKey = $searchKey.val();
             searchKey = escapeHtml(searchKey.trim());
-            var url = "HotelController?action=search&searchKey=" + searchKey;
-            $.get(url).then(function (hotel) {
-                renderDetails(hotel);
-                $btnDelete.show();
-            }, handleError);
+            var url = baseUrl + "?action=search&searchKey=" + searchKey;
+            $.get(url)
+                .then(function (hotel) {
+                    renderDetails(hotel);
+                    $btnDelete.show();
+                }, handleError);
         });
 
         var htmlEscapeCodeMap = {
