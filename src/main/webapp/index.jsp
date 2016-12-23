@@ -26,7 +26,10 @@
         </div>
 
         <div class="leftArea">
-            <ul id="hotelList">
+            <ul id="hotelList">  
+                <Li v-for="hotel in hotels">
+                    <a href="#" :data-identity="baseUrl + '?action=findone&hotelId=' + hotel.hotelId">{{hotel.name}}</a>
+                </li>
             </ul>
         </div>
 
@@ -67,6 +70,7 @@
         </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="js/vue.js"></script>
         <script src="js/app.js"></script>
     </body>
 </html>
