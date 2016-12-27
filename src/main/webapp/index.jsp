@@ -15,20 +15,21 @@
         <link rel="stylesheet" href="css/styles.css" /> 
     </head>
     <body>
+        <div id="app">
         <h1>Hotel Manager :: AJAX / Spring-Data-JPA Demo</h1>
         <p class="errMsg">${errMessage == null ? "" : "Sorry, there was a problem: " + errMessage}</p>
 
         <div class="header">
             <!-- These items are handled by app.js -->
-            <input type="text" id="searchKey"/>
-            <button id="btnSearch">Search</button>
-            <button id="btnAdd">New Hotel</button>
+            <input v-model="searchKey" type="text" id="searchKey"/>
+            <button v-on:click="searchHotels()" id="btnSearch">Search</button>
+            <button v-on:click="clearForm()" id="btnAdd">New Hotel</button>
         </div>
 
         <div class="leftArea">
             <ul id="hotelList">  
                 <Li v-for="hotel in hotels">
-                    <a href="#" :data-identity="baseUrl + '?action=findone&hotelId=' + hotel.hotelId">{{hotel.name}}</a>
+                    <a href="#" v-on:click="findById(hotel.hotelId)">{{hotel.name}}</a>
                 </li>
             </ul>
         </div>
@@ -39,22 +40,22 @@
                 <div class="mainArea">
 
                     <label>Id:</label>
-                    <input id="hotelId" name="hotelId" type="text" readonly />
+                    <input id="hotelId" name="hotelId" type="text" v-model="hotelId" readonly>
 
                     <label>Name:</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" v-model="hotelName" required>
 
                     <label>Address</label>
-                    <input type="text" id="address" name="address"/>
+                    <input type="text" id="address" name="address" v-model="hotelAddress">
 
                     <label>City</label>
-                    <input type="text" id="city" name="city"/>
+                    <input type="text" id="city" name="city" v-model="hotelCity">
 
                     <label>Zip</label>
-                    <input type="text" id="zip" name="zip"/>
+                    <input type="text" id="zip" name="zip" v-model="hotelZip">
 
-                    <button id="btnSave" name="Update" type="button" value="Save">Save</button>
-                    <button id="btnDelete" name="Update" type="button" value="Delete">Delete</button>
+                    <button v-on:click="saveOrUpdateHotel()" id="btnSave" name="Update" type="button" value="Save">Save</button>
+                    <button v-on:click="deleteHotel()" v-bind:style="{ visibility: btnDeleteShow}" id="btnDelete" name="Update" type="button" value="Delete">Delete</button>
 
                 </div>
 
@@ -68,9 +69,10 @@
 
             </form>
         </div>
+        </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="js/vue.js"></script>
+        <script src="https://unpkg.com/vue@2.1.7/dist/vue.js"></script>
         <script src="js/app.js"></script>
     </body>
 </html>

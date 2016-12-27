@@ -19,9 +19,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, Serializ
     
     // these custom queries added by developer
     
-    @Query("delete from Hotel h where h.hotelId = :id")
-    void deleteById(@Param("id") Integer id);
-    
     @Query("select h from Hotel h where h.name LIKE :searchKey OR h.city LIKE :searchKey OR h.zip LIKE :searchKey")
     List<Hotel> searchForHotelByAny(@Param("searchKey") String searchKey);
 }

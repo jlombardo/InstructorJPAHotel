@@ -40,7 +40,7 @@ public class HotelFacade {
     }
     
     public void deleteById(Integer id) {
-        hotelRepo.deleteById(id);
+        hotelRepo.delete(id);
     }
     
     /**

@@ -13,6 +13,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -94,7 +95,10 @@ public class HotelController extends HttpServlet {
                     hotelService.deleteById(Integer.valueOf(hotelId));
                     response.setContentType("application/json; charset=UTF-8");
                     response.setStatus(200);
-                    out.write("{\"success\":\"true\"}");
+                    JsonObjectBuilder builder = Json.createObjectBuilder()
+                            .add("success", true);
+                    JsonObject statusObj = builder.build();
+                    out.write(statusObj.toString());
                     out.flush();
                     break;
                 }
@@ -118,9 +122,8 @@ public class HotelController extends HttpServlet {
 
                     // create new entity and populate
                     Hotel hotel = new Hotel();
-                    hotelId = hotelJson.getString("hotelId");
-                    Integer id = (hotelId == null || hotelId.isEmpty()) ? null : Integer.valueOf(hotelId);
-                    hotel.setHotelId(id);
+                    int idVal = hotelJson.getInt("hotelId",0);
+                    hotel.setHotelId(idVal);
                     hotel.setAddress(hotelJson.getString("address"));
                     hotel.setCity(hotelJson.getString("city"));
                     hotel.setName(hotelJson.getString("name"));
@@ -130,7 +133,10 @@ public class HotelController extends HttpServlet {
 
                     response.setContentType("application/json; charset=UTF-8");
                     response.setStatus(200);
-                    out.write("{\"success\":\"true\"}");
+                    JsonObjectBuilder builder = Json.createObjectBuilder()
+                            .add("success", true);
+                    JsonObject statusObj = builder.build();
+                    out.write(statusObj.toString());
                     out.flush();
                     break;
                 }
